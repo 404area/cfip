@@ -1,24 +1,22 @@
-name: cfip-merge (preview)
-# v2 执行单 S1：预览模式。只读仓库，结果只进 artifact 和 job summary，不提交、不改 out/。
+name: cfip-pool (preview)
+# v2 执行单 S1：预览模式。结果只进 artifact 和 job summary，不提交仓库。
 on:
   workflow_dispatch: {}
-  push:
-    paths: ['out/*-*.txt', 'out/_status/*.json']
   schedule:
-    - cron: '58 21 * * *'   # 05:58 CST
+    - cron: '30 20 * * *'   # 04:30 CST
 permissions:
   contents: read
 concurrency:
-  group: cfip-merge
+  group: cfip-pool
   cancel-in-progress: false
 jobs:
-  merge-preview:
+  pool-preview:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: python3 scripts/merge.py --preview --repo . --outdir preview
+      - run: python3 scripts/pool.py --preview --repo . --outdir preview
       - uses: actions/upload-artifact@v4
-        with: { name: merge-preview, path: preview/, retention-days: 14 }
+        with: { name: pool-preview, path: preview/, retention-days: 14 }
